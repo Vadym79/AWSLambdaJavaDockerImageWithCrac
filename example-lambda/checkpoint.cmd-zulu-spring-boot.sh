@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/prepare-jdk.cmd.sh
+/prepare-jdk.cmd-zulu-spring-boot.sh
 
 # Ensure small PID, for privileged-less criu to be able to restore PID by bumping.
 # But not too small, to avoid clashes with other occasional processes on restore.

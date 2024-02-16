@@ -13,7 +13,7 @@ RUN LIBJVM= $JAVA_HOME/lib/server/libjvm.so; \
 	       ln -s /tmp/sub/$LIBJVM $LIBJVM
 
 
-COPY prepare-jdk.cmd.sh /
+COPY prepare-jdk.cmd-zulu-spring-boot.sh /
 
 # Copy function code and runtime dependencies from Maven layout
 COPY target/classes /function
@@ -21,7 +21,7 @@ COPY target/dependency/* /function/lib/
 
 
 
-RUN /prepare-jdk.cmd.sh ; \
+RUN /prepare-jdk.cmd-zulu-spring-boot.sh ; \
 	cd /function/lib;  $JAVA_HOME/bin/jar -x -f aws-lambda-java-runtime-interface-client*.jar \
 		aws-lambda-runtime-interface-client.musl.so \
 		aws-lambda-runtime-interface-client.glibc.so
@@ -31,8 +31,8 @@ WORKDIR /function
 
 ENV AWS_XRAY_CONTEXT_MISSING=LOG_ERROR
 
-COPY checkpoint.cmd.sh /
-ENTRYPOINT [ "/bin/bash", "/checkpoint.cmd.sh" ]
+COPY checkpoint.cmd-zulu-spring-boot.sh /
+ENTRYPOINT [ "/bin/bash", "/checkpoint.cmd-zulu-spring-boot.sh" ]
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 CMD [ "software.amazonaws.example.product.handler.StreamLambdaHandler::handleRequest" ]

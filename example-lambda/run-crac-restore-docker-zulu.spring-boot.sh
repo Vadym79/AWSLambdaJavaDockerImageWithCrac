@@ -15,7 +15,7 @@ local_test() {
 s05_local_restore() {
 	local_test \
 		crac-lambda-restore-zulu-spring-boot \
-		/aws-lambda-rie /bin/bash /restore.cmd.sh
+		/aws-lambda-rie /bin/bash /restore.cmd-zulu-spring-boot.sh
 }
 
 s05_local_restore
