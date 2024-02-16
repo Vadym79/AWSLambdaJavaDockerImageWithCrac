@@ -1,0 +1,7 @@
+docker build -t spring-boot-3.2--with-aws-serverless-container-lambda-jdk-21-with-crac-snapshot -f Dockerfile.snapshot .
+
+
+docker run --privileged --rm --name aws-serverless-container-lambda-crac-snapshot -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr -p 8080:8080  spring-boot-3.2--with-aws-serverless-container-lambda-jdk-21-with-crac-snapshot
+
+
+curl "http://localhost:8080/2015-03-31/functions/function/invocations" -d '"resource": "/products/{id}", "path": "/products/0", "httpMethod": "GET", "pathParameters": {"id": "0"}, "requestContext": { "identity": {"apiKey": "blabla"}}}'

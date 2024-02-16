@@ -1,0 +1,13 @@
+**/jdk
+**/target
+**/aws-lambda-rie
+**/cr
+**/log.json
+**/response.json
+**/zulu21.32.17-ca-crac-jdk21.0.2-linux_x64
+**/zulu21.32.17-ca-crac-jdk21.0.2-linux_x64.tar.gz
+example-lambda/zulu21.32.17-ca-crac-jdk21.0.2-linux_x64.tar.gz
+*.iml
+.vscode
+**/.idea
+**/samconfig.toml

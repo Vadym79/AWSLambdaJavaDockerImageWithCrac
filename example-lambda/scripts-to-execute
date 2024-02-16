@@ -1,0 +1,30 @@
+	docker run --privileged --rm --name crac-checkpoint -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr -p 8080:8080 -e AWS_REGION=eu-central-1 crac-lambda-checkpoint
+	
+	 curl -XPOST --no-progress-meter -d "{ Records : [ { body : \"${1}\" } ] }" http://localhost:8080/2015-03-31/functions/function/invocations
+	 
+	 JAVA_HOME=~/environment/AWSLambdaJavaCrac/example-lambda/jdk
+	 
+	 export JAVA_HOME
+	 
+	 
+	 export JAVA_HOME
+	 
+	 M2_HOME='/opt/apache-maven-3.8.5'
+     PATH="$M2_HOME/bin:$PATH"
+     export PATH
+     
+     docker build -t crac-lambda-checkpoint-zulu -f Dockerfile-zulu.checkpoint .
+     docker run --privileged --rm --name crac-checkpoint-zulu -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr -p 8080:8080 -e AWS_REGION=eu-central-1 crac-lambda-checkpoint-zulu
+     
+     docker build -t crac-lambda-restore -f Dockerfile.restore .
+     
+     docker exec -it <mycontainer> bash
+     
+     
+     docker build -t crac-lambda-checkpoint-zulu-spring-boot -f Dockerfile-zulu-spring-boot.checkpoint .
+     docker run --privileged --rm --name crac-checkpoint-zulu-spring-boot -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr -p 8080:8080 -e AWS_REGION=eu-central-1 crac-lambda-checkpoint-zulu-spring-boot
+     
+     	sudo rm -f cr/dump4.log # XXX
+
+     docker build -t crac-lambda-restore-zulu-spring-boot -f Dockerfile-zulu-spring-boot.restore .
+     
