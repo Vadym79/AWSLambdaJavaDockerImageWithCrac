@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk:21-jdk-crac-latest as builder
+cd AWSFROM azul/zulu-openjdk:21-jdk-crac-latest as builder
 
 RUN apt update && \
 	DEBIAN_FRONTEND=noninteractive apt -y --no-install-recommends install liblz4-tool libnl-3-dev ca-certificates-java && \

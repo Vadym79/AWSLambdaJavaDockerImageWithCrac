@@ -1,6 +1,6 @@
 #!/bin/bash
 
-s[ -d /tmp/sub/jdk ] && exit 0
+[ -d /tmp/sub/jdk ] && exit 0
 
 
 
@@ -8,5 +8,5 @@ s[ -d /tmp/sub/jdk ] && exit 0
 umask 0002
 
 mkdir -p /tmp/sub/jdk/lib/server/
-lz4 -d $JAVA_HOME/lib/server/libjvm.so.lz4 /tmp/sub/jdk/lib/server/libjvm.so
+cp $JAVA_HOME/lib/server/libjvm.so /tmp/sub/jdk/lib/server
 ln -s -t /tmp/sub/jdk/lib  $JAVA_HOME/lib/* 2>/dev/null

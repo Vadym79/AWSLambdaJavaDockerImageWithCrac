@@ -1,8 +1,8 @@
 #!/bin/bash
 local_test() {
 	docker run \
-	    --rm \
-		--name crac-restore-test-zulu-spring-boot \
+		--rm \
+		--name crac-test-restre-zulu-spring-boot \
 		-v $PWD/aws-lambda-rie:/aws-lambda-rie \
 		-p 8080:8080 \
 		--device-read-bps /dev/loop0:1024 \

@@ -12,23 +12,21 @@ RUN echo $JAVA_HOME
 COPY cr /cr
 RUN tar -c /cr | lz4 -z -9 - /cr.tar.lz4
 
+COPY restore.cmd-zulu-spring-boot.sh /
+COPY prepare-restore-jdk.cmd-zulu-spring-boot.sh /
 
 # Copy function code and runtime dependencies from Maven layout
 COPY target/classes /function
 COPY target/dependency/* /function/lib/
 
 
-
-
-RUN /prepare-jdk.cmd-zulu-spring-boot.sh ; \
+RUN /prepare-restore-jdk.cmd-zulu-spring-boot.sh ; \
 	cd /function/lib;  $JAVA_HOME/bin/jar -x -f aws-lambda-java-runtime-interface-client*.jar \
 		aws-lambda-runtime-interface-client.musl.so \
 		aws-lambda-runtime-interface-client.glibc.so
 		
 WORKDIR /function
 
-COPY restore.cmd-zulu-spring-boot.sh /
-COPY prepare-jdk.cmd-zulu-spring-boot.sh /
 
 ENTRYPOINT [ "/bin/bash", "/restore.cmd-zulu-spring-boot.sh" ]
 
