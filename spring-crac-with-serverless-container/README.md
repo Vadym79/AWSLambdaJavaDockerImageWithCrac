@@ -1,4 +1,9 @@
-# AWS Lambda on Java with CRaC
+# Java 21 with Spring Boot 3.2. with CRaC support as AWS Container Image
+
+
+Took https://github.com/CRaC/example-lambda as basis and adopted-
+
+Used Azul Zulu Opend JDK 21 as it supports CRaC
 
 This is an example of a Java AWS Lambda that uses Project CRaC to reduce the cost and time of the first function invocation.
 
@@ -108,24 +113,6 @@ To test cold start, drop file system caches by:
 ./crac-steps.sh make_cold_local
 ```
 
-#### Deploy to AWS
-
-The helper script can deploy the container, assuming there is a function named `crac-test` configured to use image `crac-test`.
-
-Initialize the evironment:
-```
-eval $(./crac-steps.sh s06_init_aws)
-```
-
-Push the container and update the function:
-```
-./crac-steps.sh s07_deploy_aws
-```
-
-To test cold start, reconfigure the function by:
-```
-./crac-steps.sh make_cold_aws
-```
 
 ## Techical details
 

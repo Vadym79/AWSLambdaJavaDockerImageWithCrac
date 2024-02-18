@@ -70,6 +70,11 @@ s04_prepare_restore() {
 }
 
 
+make_cold_local() {
+        sync
+        echo 3 | sudo tee /proc/sys/vm/drop_caches > /dev/null
+}
+
 
 local_test() {
 	docker run \
