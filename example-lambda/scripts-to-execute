@@ -23,18 +23,23 @@ sudo mv apache-maven-3.8.5 /opt/
      
      
      
-     docker build -t crac-lambda-checkpoint-zulu-spring-boot -f Dockerfile-zulu-spring-boot.checkpoint .
      
      Dynamo DB
+     https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html
      
      start dynamob
      java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
      create products table 
      execute create-dynamo-table.sh
+     
+     check if table was created
+     aws dynamodb list-tables --endpoint-url http://localhost:8000
 
      
      hostname -I
      take second IP address and pass as value for AWS_ENDPOINT_URL_DYNAMODB
+     
+     docker build -t crac-lambda-checkpoint-zulu-spring-boot -f Dockerfile-zulu-spring-boot.checkpoint .
      
      docker run --privileged --rm --name crac-checkpoint-zulu-spring-boot -e AWS_ENDPOINT_URL_DYNAMODB=http://172.17.0.1:8000 -e PRODUCT_TABLE_NAME=AWSLambdaSpringBoot32Java21DockerImageAndCRaCProductsTable -e AWS_REGION=fake  -e AWS_ACCESS_KEY_ID=fake -e AWS_SECRET_ACCESS_KEY=fake -e AWS_SESSION_TOKEN=fake -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr -p 8080:8080  crac-lambda-checkpoint-zulu-spring-boot
      

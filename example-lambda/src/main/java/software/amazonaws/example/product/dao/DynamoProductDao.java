@@ -27,6 +27,9 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazonaws.example.product.entity.Product;
 import software.amazonaws.example.product.entity.Products;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
+
   
 @Repository
 public class DynamoProductDao implements ProductDao {
@@ -34,21 +37,28 @@ public class DynamoProductDao implements ProductDao {
   private static final String PRODUCT_TABLE_NAME = System.getenv("PRODUCT_TABLE_NAME");
   private static final String ENDPOINT = System.getenv("AWS_ENDPOINT_URL_DYNAMODB");
 
+  private static final SdkHttpClient httpClient = ApacheHttpClient.create();
   private static final DynamoDbClient dynamoDbClient;
    static {
 	
 		if (ENDPOINT != null) {
 			dynamoDbClient = DynamoDbClient.builder().endpointOverride(URI.create(ENDPOINT))
 					.credentialsProvider(DefaultCredentialsProvider.create()).region(Region.EU_CENTRAL_1)
+					.httpClient(httpClient)
 					.overrideConfiguration(ClientOverrideConfiguration.builder().build())
 					.httpClient(UrlConnectionHttpClient.builder().build()).build();
 		} else {
 			dynamoDbClient = DynamoDbClient.builder().credentialsProvider(DefaultCredentialsProvider.create())
-					.region(Region.EU_CENTRAL_1).overrideConfiguration(ClientOverrideConfiguration.builder().build())
+					.region(Region.EU_CENTRAL_1).httpClient(httpClient).overrideConfiguration(ClientOverrideConfiguration.builder().build())
 					.httpClient(UrlConnectionHttpClient.builder().build()).build();
 		}
 	}
-   
+
+  @Override
+  public void close () {
+    httpClient.close();
+    dynamoDbClient.close();
+  }
   @Override
   public Optional<Product> getProduct(String id) {
     logger.info ("product table name "+PRODUCT_TABLE_NAME);
