@@ -32,6 +32,42 @@ The deployment scheme will be:
     * [Deploy to AWS](#deploy-to-aws)
 * [Techical details](#techical-details)
 
+## Sequence of executions
+
+-Install Maven locally which is capabale of building Java 21 projecs
+
+-Execute first step  ./crac-steps.sh s00_init
+
+set JAVA_HOME to linked Zulu JDK (jdk project folder)  
+
+JAVA_HOME=~/environment/AWSLambdaJavaCrac/example-lambda/jdk  
+	 
+export JAVA_HOME  
+
+-Execute  ./crac-steps.sh s01_build  
+
+ 
+-Install Dynamo DB locally  
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html  
+     
+start dynamob  
+java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb  
+
+create products DynamoDB table   
+execute create-dynamo-table.sh   
+     
+check if table was created  
+aws dynamodb list-tables --endpoint-url http://localhost:8000   
+
+-Set AWS_ENDPOINT_URL_DYNAMODB  
+hostname -I   
+take second IP address and exchange the value for AWS_ENDPOINT_URL_DYNAMODB in the ./crac-steps.sh s02_start_checkpoint
+
+Then execute  
+./crac-steps.sh s02_start_checkpoint  
+
+     
+
 ## Instruction
 
 The repo contain a helper script to perform routine operations.

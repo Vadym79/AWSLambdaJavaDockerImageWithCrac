@@ -29,16 +29,16 @@ public class PrimingResource implements Resource {
   public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
      logger.info("beforeCheckpoint hook");
     //Below line would initialize the AWS SDK DynamoDBClient class. This technique is called "Priming".
-    /*
-    	Optional<Product> optionalProduct =  productDao.getProduct("0");
+    
+    	Optional<Product> optionalProduct =  productDao.getProductForPriming("0");
      	if (optionalProduct.isPresent())
 			logger.info(" product : " + optionalProduct.get());
 		else
 			logger.info(" product not found ");
 			
-		productDao.close();
+		productDao.closeForPriming();
 		logger.info(" closed client ");
-		*/
+		Thread.sleep(1500);
 		
   }
 

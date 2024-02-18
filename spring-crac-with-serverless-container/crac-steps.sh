@@ -16,12 +16,12 @@ s00_init() {
 	#curl -LO https://d1ni2b6xgvw0s0.cloudfront.net/v2.x/dynamodb_local_latest.tar.gz
 	#tar axf dynamodb_local_latest.tar.gz
 
+	#curl -L -o aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.15/aws-lambda-rie
+    #chmod +x aws-lambda-rie
 
-	curl -L -o aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.15/aws-lambda-rie-$(uname -m)
-	chmod +x aws-lambda-rie
 
 	
-	curl -LO https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-crac-jdk21.0.2-linux_x64.tar.gz
+	curl -LO  https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-crac-jdk21.0.2-linux_x64.tar.gz
 	tar axf zulu21.32.17-ca-crac-jdk21.0.2-linux_x64.tar.gz
 
  	dojlink zulu21.32.17-ca-crac-jdk21.0.2-linux_x64
@@ -29,6 +29,7 @@ s00_init() {
 
 s01_build() {
 	mvn clean compile dependency:copy-dependencies -DincludeScope=runtime
+	sudo rm -r -f cr
 	docker build -t crac-lambda-checkpoint-zulu-spring-boot -f Dockerfile-zulu-spring-boot.checkpoint .
 }
 
@@ -82,6 +83,9 @@ local_test() {
 		--name crac-test-restre-zulu-spring-boot \
 		-v $PWD/aws-lambda-rie:/aws-lambda-rie \
 		-p 8080:8080 \
+		-e AWS_ENDPOINT_URL_DYNAMODB=bla \
+		-e AWS_ACCESS_KEY_ID=fake \
+		-e AWS_SECRET_ACCESS_KEY=fake \
 		--expose 8000  \
 		--device-read-bps /dev/loop0:1024 \
 		--device-write-bps /dev/loop0:1024 \

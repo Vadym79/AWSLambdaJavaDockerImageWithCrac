@@ -12,11 +12,13 @@ public interface ProductDao {
 
   Optional<Product> getProduct(String id);
 
+  Optional<Product> getProductForPriming(String id);
+
   void putProduct(Product product);
 
   void deleteProduct(String id);
 
   Products getAllProduct();
   
-  void close ();
+  void closeForPriming ();
 }

@@ -1,3 +1,43 @@
+Install Maven locally which is capabale of building Java 21 projecs..
+
+execute first step  ./crac-steps.sh s00_init
+
+set JAVA_HOME to linked Zulu JDK (jdk project folder)
+
+JAVA_HOME=~/environment/AWSLambdaJavaCrac/example-lambda/jdk
+	 
+export JAVA_HOME
+
+Then execute  ./crac-steps.sh s01_build
+
+ 
+Then install Dynamo DB locally
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html
+     
+start dynamob
+java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
+
+create products DynamoDB table   
+execute create-dynamo-table.sh  
+     
+check if table was created  
+aws dynamodb list-tables --endpoint-url http://localhost:8000  
+
+hostname -I  
+take second IP address and pass as value for AWS_ENDPOINT_URL_DYNAMODB of crac-steps.sh  
+
+Then execute 
+./crac-steps.sh s02_start_checkpoint
+
+     
+
+
+
+
+-------
+
+old instructions
+
 	docker run --privileged --rm --name crac-checkpoint -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr -p 8080:8080 -e AWS_REGION=eu-central-1 crac-lambda-checkpoint
 	
 	 curl -XPOST --no-progress-meter -d "{ Records : [ { body : \"${1}\" } ] }" http://localhost:8080/2015-03-31/functions/function/invocations
