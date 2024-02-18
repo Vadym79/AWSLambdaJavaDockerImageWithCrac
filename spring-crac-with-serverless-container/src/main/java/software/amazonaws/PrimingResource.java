@@ -16,34 +16,34 @@ import org.slf4j.LoggerFactory;
 @Configuration
 public class PrimingResource implements Resource {
 
-  @Autowired
-  private DynamoProductDao productDao;
-  
-  private static final Logger logger = LoggerFactory.getLogger(PrimingResource.class);
+	@Autowired
+	private DynamoProductDao productDao;
 
-  public PrimingResource() {
-    Core.getGlobalContext().register(this);
-  }
+	private static final Logger logger = LoggerFactory.getLogger(PrimingResource.class);
 
-  @Override
-  public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
-     logger.info("beforeCheckpoint hook");
-    //Below line would initialize the AWS SDK DynamoDBClient class. This technique is called "Priming".
-    
-    	Optional<Product> optionalProduct =  productDao.getProductForPriming("0");
-     	if (optionalProduct.isPresent())
+	public PrimingResource() {
+		Core.getGlobalContext().register(this);
+	}
+
+	@Override
+	public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
+		logger.info("beforeCheckpoint hook");
+		// Below line would initialize the AWS SDK DynamoDBClient class. This technique
+		// is called "Priming".
+
+		Optional<Product> optionalProduct = productDao.getProductForPriming("0");
+		if (optionalProduct.isPresent())
 			logger.info(" product : " + optionalProduct.get());
 		else
 			logger.info(" product not found ");
-			
+
 		productDao.closeForPriming();
 		logger.info(" closed client ");
 		Thread.sleep(1500);
-		
-  }
+	}
 
-  @Override
-  public void afterRestore(Context<? extends Resource> context) throws Exception {
-    System.out.println("afterRestore hook");
-  }
+	@Override
+	public void afterRestore(Context<? extends Resource> context) throws Exception {
+		System.out.println("afterRestore hook");
+	}
 }
