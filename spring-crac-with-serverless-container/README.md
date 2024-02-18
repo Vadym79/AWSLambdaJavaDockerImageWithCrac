@@ -40,6 +40,8 @@ The deployment scheme will be:
 
 set JAVA_HOME to linked Zulu JDK (jdk project folder)  
 
+for example:
+
 JAVA_HOME=~/environment/AWSLambdaJavaCrac/example-lambda/jdk  
 	 
 export JAVA_HOME  
