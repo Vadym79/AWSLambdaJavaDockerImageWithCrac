@@ -1,4 +1,4 @@
-# Java 21 with Spring Boot 3.2. with CRaC support as AWS Container Image
+# Java 21 with Spring Boot 3.2. with CRaC support as AWS Lamda (Docker) Container Image
 
 
 Took https://github.com/CRaC/example-lambda as basis and adopted-
