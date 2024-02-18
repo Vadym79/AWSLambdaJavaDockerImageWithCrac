@@ -1,15 +1,5 @@
 #!/bin/bash
 
-LAMBDA_NAME=crac-test
-LAMBDA_IMAGE=crac-test
-
-IOLIM=60m
-DEV=/dev/nvme0n1
-CPU=0.88
-
-  dev() {   DEV=$1; }
-iolim() { IOLIM=$1; }
-  cpu() {   CPU=$1; }
 
 dojlink() {
 	local JDK=$1
@@ -19,35 +9,39 @@ dojlink() {
 	cp $JDK/lib/criu jdk/lib/
 }
 
+
+
 s00_init() {
-	curl -L -o aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.3/aws-lambda-rie-$(uname -m)
+
+	#curl -LO https://d1ni2b6xgvw0s0.cloudfront.net/v2.x/dynamodb_local_latest.tar.gz
+	#tar axf dynamodb_local_latest.tar.gz
+
+
+	curl -L -o aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.15/aws-lambda-rie-$(uname -m)
 	chmod +x aws-lambda-rie
 
-	echo
-	echo "Take the latest build of openjdk/crac and run: "$0" dojlink ./path/to/crac/jdk"
-	echo "https://github.com/CRaC/openjdk-builds/actions/workflows/release.yml"
+	
+	curl -LO https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-crac-jdk21.0.2-linux_x64.tar.gz
+	tar axf zulu21.32.17-ca-crac-jdk21.0.2-linux_x64.tar.gz
 
-	#CRAC_VERSION=17-crac+2
-	#curl -LO https://github.com/CRaC/openjdk-builds/releases/download/$CRAC_VERSION/jdk$CRAC_VERSION.tar.gz
-	#tar axf jdk$CRAC_VERSION.tar.gz
-	#dojlink jdk$CRAC_VERSION
+ 	dojlink zulu21.32.17-ca-crac-jdk21.0.2-linux_x64
 }
 
 s01_build() {
 	mvn clean compile dependency:copy-dependencies -DincludeScope=runtime
-	docker build -t crac-lambda-checkpoint -f Dockerfile.checkpoint .
+	docker build -t crac-lambda-checkpoint-zulu-spring-boot -f Dockerfile-zulu-spring-boot.checkpoint .
 }
 
 s02_start_checkpoint() {
-	docker run \
-		--privileged \
-		--rm \
-		--name crac-checkpoint \
-		-v $PWD/aws-lambda-rie:/aws-lambda-rie \
-		-v $PWD/cr:/cr \
-		-p 8080:8080 \
-		-e AWS_REGION=us-west-2 \
-		crac-lambda-checkpoint
+   docker run \
+   --privileged  \
+   --rm \
+   --name crac-checkpoint-zulu-spring-boot \
+   -e AWS_ENDPOINT_URL_DYNAMODB=http://172.17.0.1:8000 -e PRODUCT_TABLE_NAME=AWSLambdaSpringBoot32Java21DockerImageAndCRaCProductsTable -e AWS_REGION=fake  -e AWS_ACCESS_KEY_ID=fake -e AWS_SECRET_ACCESS_KEY=fake -e AWS_SESSION_TOKEN=fake \
+   -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr \
+   -p 8080:8080  \
+   crac-lambda-checkpoint-zulu-spring-boot
+     
 }
 
 rawpost() {
@@ -60,113 +54,41 @@ rawpost() {
 }
 
 post() {
-        rawpost "{ Records : [ { body : \"${1}\" } ] }"
+  rawpost '{"resource": "/products/{id}", "path": "/products/0", "httpMethod": "GET", "pathParameters": {"id": "0"}, "requestContext": { "identity": {"apiKey": "blabla"}}}'
 }
 
 s03_checkpoint() {
         post checkpoint
-        sleep 2
-        post fini
-	docker rm -f crac-checkpoint
+        #sleep 2
+        #post fini
+     	#docker rm -f crac-checkpoint-zulu-spring-boot
 }
 
 s04_prepare_restore() {
 	sudo rm -f cr/dump4.log # XXX
-	docker build -t crac-lambda-restore -f Dockerfile.restore .
+	docker build -t crac-lambda-restore-zulu-spring-boot -f Dockerfile-zulu-spring-boot.restore .
 }
 
-make_cold_local() {
-        sync
-        echo 3 | sudo tee /proc/sys/vm/drop_caches > /dev/null
-}
+
 
 local_test() {
 	docker run \
 		--rm \
-		--name crac-test \
+		--name crac-test-restre-zulu-spring-boot \
 		-v $PWD/aws-lambda-rie:/aws-lambda-rie \
 		-p 8080:8080 \
-		--device-read-bps $DEV:$IOLIM \
-		--device-write-bps $DEV:$IOLIM \
-		--cpus $CPU \
+		--expose 8000  \
+		--device-read-bps /dev/loop0:1024 \
+		--device-write-bps /dev/loop0:1024 \
+		--cpus 1 \
 		--entrypoint '' \
-		--security-opt seccomp=$PWD/seccomp.json \
 		"$@"
 }
 
 s05_local_restore() {
 	local_test \
-		crac-lambda-restore \
-		/aws-lambda-rie /bin/bash /restore.cmd.sh
-}
-
-local_baseline() {
-	local_test crac-lambda-checkpoint \
-		/aws-lambda-rie /jdk/bin/java \
-			-XX:-UsePerfData \
-			-cp /function:/function/lib/* \
-			-Dcom.amazonaws.services.lambda.runtime.api.client.NativeClient.libsBase=/function/lib/ \
-			--add-opens java.base/java.util=ALL-UNNAMED \
-			com.amazonaws.services.lambda.runtime.api.client.AWSLambda \
-			example.Handler::handleRequest
-}
-
-ltest() {
-	local_test \
-		-v /home:/home \
-		-v $PWD/logdir:/tmp/log \
-		crac-lambda-restore \
-		/bin/bash $PWD/restore.cmd.sh
-}
-
-s06_init_aws() {
-	ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account')
-	echo export ACCOUNT=$ACCOUNT
-	REGION=$(aws configure get region)
-	echo export REGION=$REGION
-	ECR=$ACCOUNT.dkr.ecr.$REGION.amazonaws.com
-	echo export ECR=$ECR
-	REMOTEIMG=$ECR/$LAMBDA_IMAGE
-	echo export REMOTEIMG=$REMOTEIMG
-	aws ecr get-login-password | docker login --username AWS --password-stdin $ECR 1>&2
-}
-
-s07_deploy_aws() {
-        docker tag crac-lambda-restore $REMOTEIMG
-        docker push $REMOTEIMG
-
-        local digest=$(docker inspect -f '{{ index .RepoDigests 0 }}' $REMOTEIMG)
-        aws lambda update-function-code --function-name $LAMBDA_NAME --image $digest
-        aws lambda wait function-updated --function-name $LAMBDA_NAME
-}
-
-s08_invoke_aws() {
-	rm -f response.json log.json
-
-	aws lambda invoke  \
-		--cli-binary-format raw-in-base64-out \
-		--function-name $LAMBDA_NAME \
-		--payload "$(< event.json) " \
-		--log-type Tail \
-		response.json \
-		> log.json
-
-	jq . < response.json 
-	jq -r .LogResult < log.json | base64 -d
-}
-
-make_cold_aws() {
-	local mem=$(aws lambda get-function-configuration --function-name $LAMBDA_NAME | jq -r '.MemorySize')
-	local min=256
-	local max=512
-	aws lambda update-function-configuration --function-name $LAMBDA_NAME --memory-size $(($min + (($mem + 1) % ($max - $min))))
-	aws lambda wait function-updated --function-name $LAMBDA_NAME
-}
-
-steps() {
-	for i; do
-		$i || break
-	done
+		crac-lambda-restore-zulu-spring-boot \
+		/aws-lambda-rie /bin/bash /restore.cmd-zulu-spring-boot.sh
 }
 
 "$@"

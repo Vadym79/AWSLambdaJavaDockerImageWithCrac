@@ -7,9 +7,7 @@ package software.amazonaws.example.product.entity;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import lombok.Data;
 
-@Data
 public class Product {
   private String id;
   private String name;

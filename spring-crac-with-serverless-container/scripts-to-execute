@@ -1,7 +1,68 @@
-docker build -t spring-boot-3.2--with-aws-serverless-container-lambda-jdk-21-with-crac-snapshot -f Dockerfile.snapshot .
+	docker run --privileged --rm --name crac-checkpoint -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr -p 8080:8080 -e AWS_REGION=eu-central-1 crac-lambda-checkpoint
+	
+	 curl -XPOST --no-progress-meter -d "{ Records : [ { body : \"${1}\" } ] }" http://localhost:8080/2015-03-31/functions/function/invocations
+	 
+	 JAVA_HOME=~/environment/AWSLambdaJavaCrac/example-lambda/jdk
+	 
+	 export JAVA_HOME
+	 
+	 wget https://mirrors.estointernet.in/apache/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz
+tar -xvf apache-maven-3.8.5-bin.tar.gz
+sudo mv apache-maven-3.8.5 /opt/
+	 
+	 export JAVA_HOME
+	 
+	 M2_HOME='/opt/apache-maven-3.8.5'
+     PATH="$M2_HOME/bin:$PATH"
+     export PATH
+     
+     
+     docker exec -it <mycontainer> bash
+     
+     +++
+     
+     
+     
+     
+     Dynamo DB
+     https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html
+     
+     start dynamob
+     java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
+     create products table 
+     execute create-dynamo-table.sh
+     
+     check if table was created
+     aws dynamodb list-tables --endpoint-url http://localhost:8000
 
+     
+     hostname -I
+     take second IP address and pass as value for AWS_ENDPOINT_URL_DYNAMODB
+     
+     docker build -t crac-lambda-checkpoint-zulu-spring-boot -f Dockerfile-zulu-spring-boot.checkpoint .
+     
+     docker run --privileged --rm --name crac-checkpoint-zulu-spring-boot -e AWS_ENDPOINT_URL_DYNAMODB=http://172.17.0.1:8000 -e PRODUCT_TABLE_NAME=AWSLambdaSpringBoot32Java21DockerImageAndCRaCProductsTable -e AWS_REGION=fake  -e AWS_ACCESS_KEY_ID=fake -e AWS_SECRET_ACCESS_KEY=fake -e AWS_SESSION_TOKEN=fake -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr -p 8080:8080  crac-lambda-checkpoint-zulu-spring-boot
+     
+     
+     aws ecr create-repository --repository-name aws-spring-boot-3.2-java21-with-crac-custom-docker-image --image-scanning-configuration scanOnPush=true --region eu-central-1  
 
-docker run --privileged --rm --name aws-serverless-container-lambda-crac-snapshot -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr -p 8080:8080  spring-boot-3.2--with-aws-serverless-container-lambda-jdk-21-with-crac-snapshot
+     sudo rm -f cr/dump4.log
+     
+     export AWS_ENDPOINT_URL=http://localhost:8000
+     
+    
+     docker build -t crac-lambda-restore-zulu-spring-boot -f Dockerfile-zulu-spring-boot.restore .
+     
+     docker run --rm --name crac-restore-zulu-spring-boot -v $PWD/aws-lambda-rie:/aws-lambda-rie -p 8080:8080 -e AWS_REGION=eu-central-1 crac-lambda-restore-zulu-spring-boot
+		
+		
+		sudo docker system prune -a -f
+    
+     
+ aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin {aws_account_id}.dkr.ecr.eu-central-1.amazonaws.com  
 
+aws ecr create-repository --repository-name aws-spring-boot-3.2-java21-with-crac-custom-docker-image --image-scanning-configuration scanOnPush=true --region eu-central-1  
 
-curl "http://localhost:8080/2015-03-31/functions/function/invocations" -d '"resource": "/products/{id}", "path": "/products/0", "httpMethod": "GET", "pathParameters": {"id": "0"}, "requestContext": { "identity": {"apiKey": "blabla"}}}'
+docker tag crac-lambda-restore-zulu-spring-boot 265634257610.dkr.ecr.eu-central-1.amazonaws.com/aws-spring-boot-3.2-java21-with-crac-custom-docker-image:v1
+
+docker push 265634257610.dkr.ecr.eu-central-1.amazonaws.com/aws-spring-boot-3.2-java21-with-crac-custom-docker-image:v1
