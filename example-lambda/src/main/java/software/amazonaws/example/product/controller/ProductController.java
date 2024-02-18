@@ -28,19 +28,19 @@ public class ProductController {
 
 	@RequestMapping(path = "/products/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Optional<Product> getProductById(@PathVariable("id") String id) {
-		logger.info("entered getProductById method with id " + id);
+		logger.info("entered getProductById method with id  crac" + id);
 		
-		/*
+		
 		Optional<Product> optionalProduct = productDao.getProduct(id);
 		if (optionalProduct.isPresent())
 			logger.info(" product : " + optionalProduct.get());
 		else
 			logger.info(" product not found ");
 		return optionalProduct;
-		*/
+	
 
-	   Product product= new Product(id, "Calender ", BigDecimal.valueOf(35.99));
-	   return Optional.of(product);
+	   //Product product= new Product(id, "Calender ", BigDecimal.valueOf(35.99));
+	   //return Optional.of(product);
 	}
 
 	@RequestMapping(path = "/products", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)

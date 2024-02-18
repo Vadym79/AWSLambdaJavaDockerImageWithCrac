@@ -27,6 +27,8 @@ RUN /prepare-restore-jdk.cmd-zulu-spring-boot.sh ; \
 		
 WORKDIR /function
 
+ENV PRODUCT_TABLE_NAME=AWSLambdaSpringBoot32Java21DockerImageAndCRaCProductsTable
+RUN echo "ENV variable value is $PRODUCT_TABLE_NAME"
 
 ENTRYPOINT [ "/bin/bash", "/restore.cmd-zulu-spring-boot.sh" ]
 

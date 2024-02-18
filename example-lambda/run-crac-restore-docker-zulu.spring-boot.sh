@@ -5,6 +5,7 @@ local_test() {
 		--name crac-test-restre-zulu-spring-boot \
 		-v $PWD/aws-lambda-rie:/aws-lambda-rie \
 		-p 8080:8080 \
+		--expose 8000  \
 		--device-read-bps /dev/loop0:1024 \
 		--device-write-bps /dev/loop0:1024 \
 		--cpus 1 \

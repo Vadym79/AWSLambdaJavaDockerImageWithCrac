@@ -19,9 +19,16 @@ dojlink() {
 	cp $JDK/lib/criu jdk/lib/
 }
 
+
+
 s00_init() {
-	curl -L -o aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.3/aws-lambda-rie-$(uname -m)
-	chmod +x aws-lambda-rie
+
+	curl -LO https://d1ni2b6xgvw0s0.cloudfront.net/v2.x/dynamodb_local_latest.tar.gz
+	tar axf dynamodb_local_latest.tar.gz
+
+
+	##curl -L -o aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/download/v1.15/aws-lambda-rie-$(uname -m)
+	#chmod +x aws-lambda-rie
 
 	echo
 	echo "Take the latest build of openjdk/crac and run: "$0" dojlink ./path/to/crac/jdk"

@@ -15,9 +15,12 @@ post() {
 
 s03_checkpoint() {
         post checkpoint
-        sleep 2
-        post fini
-	docker rm -f crac-checkpoint-zulu-spring-boot
+        #sleep 2
+        #post fini
+        #sleep 5
+	#docker rm -f crac-checkpoint-zulu-spring-boot
+	  
 }
+
 
 s03_checkpoint;

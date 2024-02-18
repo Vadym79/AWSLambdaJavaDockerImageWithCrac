@@ -1,6 +1,6 @@
 #!/bin/bash
 
-s[ -d /tmp/sub/jdk ] && exit 0
+[ -d /tmp/sub/jdk ] && exit 0
 
 
 
