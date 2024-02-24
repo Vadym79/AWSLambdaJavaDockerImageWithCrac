@@ -12,6 +12,7 @@ import software.amazonaws.example.product.entity.Product;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.nio.file.*;
 
 @Configuration
 public class PrimingResource implements Resource {
@@ -45,5 +46,7 @@ public class PrimingResource implements Resource {
 	@Override
 	public void afterRestore(Context<? extends Resource> context) throws Exception {
 		System.out.println("afterRestore hook");
+		String content = new String(Files.readAllBytes(Paths.get("/tmp/crac/dump4.log")));
+        logger.info(content);
 	}
 }

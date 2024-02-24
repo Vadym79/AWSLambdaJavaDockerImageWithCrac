@@ -99,10 +99,14 @@ The function needs to use a fork of [AWS Lambda Java Libraries](https://github.c
     </dependency>
 ```
 
-Build the app and create the container image for checkpoint (`crac-lambda-checkpoint`):
+Build the app and create the container image for the local checkpoint (`crac-lambda-checkpoint-zulu-spring-boot`):
 ```
 ./crac-steps.sh s01_build
 ```
+
+Build the app and create the container image for checkpoint on AWS side (`crac-lambda-aws-checkpoint-zulu-spring-boot`):
+```
+./crac-steps.sh s01_build_aws
 
 ### Checkpoint
 

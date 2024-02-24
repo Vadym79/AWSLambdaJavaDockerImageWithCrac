@@ -33,6 +33,12 @@ s01_build() {
 	docker build -t crac-lambda-checkpoint-zulu-spring-boot -f Dockerfile-zulu-spring-boot.checkpoint .
 }
 
+s01_build_aws() {
+	mvn clean compile dependency:copy-dependencies -DincludeScope=runtime
+	sudo rm -r -f cr
+	docker build -t crac-lambda-aws-checkpoint-zulu-spring-boot -f Dockerfile-zulu-spring-boot-aws.checkpoint .
+}
+
 s02_start_checkpoint() {
    docker run \
    --privileged  \
@@ -83,7 +89,6 @@ local_test() {
 		--name crac-test-restre-zulu-spring-boot \
 		-v $PWD/aws-lambda-rie:/aws-lambda-rie \
 		-p 8080:8080 \
-		-e AWS_ENDPOINT_URL_DYNAMODB=bla \
 		-e AWS_ACCESS_KEY_ID=fake \
 		-e AWS_SECRET_ACCESS_KEY=fake \
 		--expose 8000  \
