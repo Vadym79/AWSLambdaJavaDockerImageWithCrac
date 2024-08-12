@@ -5,15 +5,18 @@ RUN apt update && \
 	apt clean && \
 	rm -rf /var/lib/apt /var/cache/apt
 	
+	
+# RUN --mount=type=secret,target=/root/.aws/config,id=+secrets/config --mount=type=secret,target=/root/.aws/credentials,id=+secrets/credentials	
 RUN echo $JAVA_HOME
-
-
 
 COPY cr /cr
 RUN tar -c /cr | lz4 -z -9 - /cr.tar.lz4
 
 COPY restore.cmd-zulu-spring-boot.sh /
 COPY prepare-restore-jdk.cmd-zulu-spring-boot.sh /
+
+#replace criu file from the older azul crac jdk version
+COPY criu $JAVA_HOME/lib/
 
 # Copy function code and runtime dependencies from Maven layout
 COPY target/classes /function

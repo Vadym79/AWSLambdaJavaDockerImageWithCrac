@@ -10,6 +10,7 @@ exec /aws-lambda-rie /bin/bash -c '\
 		-Xshare:off \
 		-XX:-UsePerfData \
 		-XX:CRaCCheckpointTo=/cr \
+		-XX:CPUFeatures=generic \
 		-cp /function:/function/lib/* \
 		-Dspring.context.checkpoint=onRefresh \
 		-Dcom.amazonaws.services.lambda.runtime.api.client.NativeClient.libsBase=/function/lib/ \

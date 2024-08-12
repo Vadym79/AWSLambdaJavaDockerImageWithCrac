@@ -28,7 +28,7 @@ public class ProductController {
 
 	@RequestMapping(path = "/products/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Optional<Product> getProductById(@PathVariable("id") String id) {
-		logger.info("entered getProductById method with id  crac" + id);
+		logger.info("entered getProductById method with id  crac 1 " + id);
 		
 		
 		Optional<Product> optionalProduct = productDao.getProduct(id);

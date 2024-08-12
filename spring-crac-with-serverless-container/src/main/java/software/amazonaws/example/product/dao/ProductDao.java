@@ -12,7 +12,7 @@ public interface ProductDao {
 
   Optional<Product> getProduct(String id);
 
-  Optional<Product> getProductForPriming(String id);
+  // Optional<Product> getProductForPriming(String id);
 
   void putProduct(Product product);
 
@@ -20,5 +20,5 @@ public interface ProductDao {
 
   Products getAllProduct();
   
-  void closeForPriming ();
+  //void closeForPriming ();
 }

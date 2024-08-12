@@ -20,17 +20,30 @@ s00_init() {
     #chmod +x aws-lambda-rie
 
 
+	curl -LO  https://cdn.azul.com/zulu/bin/zulu21.36.19-ca-crac-jdk21.0.4-linux_x64.tar.gz
+	tar axf zulu21.36.19-ca-crac-jdk21.0.4-linux_x64.tar.gz
 	
-	curl -LO  https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-crac-jdk21.0.2-linux_x64.tar.gz
-	tar axf zulu21.32.17-ca-crac-jdk21.0.2-linux_x64.tar.gz
-
- 	dojlink zulu21.32.17-ca-crac-jdk21.0.2-linux_x64
+ 	dojlink zulu21.36.19-ca-crac-jdk21.0.4-linux_x64
 }
 
 s01_build() {
+	JAVA_HOME=jdk
+	export JAVA_HOME
 	mvn clean compile dependency:copy-dependencies -DincludeScope=runtime
 	sudo rm -r -f cr
 	docker build -t crac-lambda-checkpoint-zulu-spring-boot -f Dockerfile-zulu-spring-boot.checkpoint .
+}
+
+s02_start_checkpoint_dynamodb_priming() {
+   docker run \
+   --privileged  \
+   --rm \
+   --name crac-checkpoint-zulu-spring-boot \
+   -e AWS_ENDPOINT_URL_DYNAMODB=http://172.17.0.1:8000 -e PRODUCT_TABLE_NAME=AWSLambdaSpringBoot32Java21DockerImageAndCRaCProductsTable -e AWS_REGION=fake  -e AWS_ACCESS_KEY_ID=fake -e AWS_SECRET_ACCESS_KEY=fake -e AWS_SESSION_TOKEN=fake \
+   -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr \
+   -p 8080:8080  \
+   crac-lambda-checkpoint-zulu-spring-boot
+     
 }
 
 s02_start_checkpoint() {
@@ -38,7 +51,7 @@ s02_start_checkpoint() {
    --privileged  \
    --rm \
    --name crac-checkpoint-zulu-spring-boot \
-   -e AWS_ENDPOINT_URL_DYNAMODB=http://172.17.0.1:8000 -e PRODUCT_TABLE_NAME=AWSLambdaSpringBoot32Java21DockerImageAndCRaCProductsTable -e AWS_REGION=fake  -e AWS_ACCESS_KEY_ID=fake -e AWS_SECRET_ACCESS_KEY=fake -e AWS_SESSION_TOKEN=fake \
+   -e AWS_ENDPOINT_URL_DYNAMODB=http://172.17.0.1:8000 -e PRODUCT_TABLE_NAME=AWSLambdaSpringBoot32Java21DockerImageAndCRaCProductsTable -e AWS_ACCESS_KEY_ID= -e AWS_SECRET_ACCESS_KEY=  \
    -v $PWD/aws-lambda-rie:/aws-lambda-rie -v $PWD/cr:/cr \
    -p 8080:8080  \
    crac-lambda-checkpoint-zulu-spring-boot

@@ -7,7 +7,6 @@ import org.crac.Core;
 import org.crac.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import software.amazonaws.example.product.dao.DynamoProductDao;
 import software.amazonaws.example.product.entity.Product;
 
 import org.slf4j.Logger;
@@ -16,8 +15,8 @@ import org.slf4j.LoggerFactory;
 @Configuration
 public class PrimingResource implements Resource {
 
-	@Autowired
-	private DynamoProductDao productDao;
+	//@Autowired
+	//private DynamoProductDao productDao;
 
 	private static final Logger logger = LoggerFactory.getLogger(PrimingResource.class);
 
@@ -28,6 +27,7 @@ public class PrimingResource implements Resource {
 	@Override
 	public void beforeCheckpoint(Context<? extends Resource> context) throws Exception {
 		logger.info("beforeCheckpoint hook");
+		/*
 		// Below line would initialize the AWS SDK DynamoDBClient class. This technique
 		// is called "Priming".
 
@@ -40,6 +40,7 @@ public class PrimingResource implements Resource {
 		productDao.closeForPriming();
 		logger.info(" closed client ");
 		Thread.sleep(1500);
+		*/
 	}
 
 	@Override

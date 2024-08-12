@@ -44,18 +44,15 @@ old instructions
 	 
 	 JAVA_HOME=~/environment/AWSLambdaJavaCrac/example-lambda/jdk
 	 
-	 export JAVA_HOME
-	 
-	 wget https://mirrors.estointernet.in/apache/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz
-tar -xvf apache-maven-3.8.5-bin.tar.gz
-sudo mv apache-maven-3.8.5 /opt/
+	 JAVA_HOME=~/environment/crac/AWSLambdaJavaDockerImageWithCrac/spring-crac-with-serverless-container/jdk
 	 
 	 export JAVA_HOME
 	 
-	 M2_HOME='/opt/apache-maven-3.8.5'
-     PATH="$M2_HOME/bin:$PATH"
-     export PATH
-     
+	 
+	 install maven 
+	 sudo yum install maven
+	 
+
      
      docker exec -it <mycontainer> bash
      
